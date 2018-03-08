@@ -13,11 +13,13 @@ CSCI 235 Project 1: World Jumble
 #include <algorithm>
 #include "player.h"
 #include "gameLogic.h"
+
 int main(){
 
 Player player1;
 Game newGame;
 bool win = false;
+bool lifeAllowed = true;
 int guesses = 0;
 int lifelines = 5;
 
@@ -32,29 +34,26 @@ while(teststream>>a){
 	testVec.push_back(a);
 }
 
-newGame.welcomeMessage(lifelines);
+newGame.welcomeMessage(); // message explain the rules of the game to the player
 
-srand(time(0));
 
-int mod = testVec.size();
-int index = rand() % mod;
+std::string wordToGuess = newGame.chooseAWord(testVec);
+std::string gameWord= wordToGuess;
 
-std::string scramble = testVec[index];
-random_shuffle(scramble.begin(),scramble.end());
+newGame.jumbler(gameWord);
 
 while(!win && (guesses < 3)){
 
-	std::string wordToGuess = testVec[index];
-	newGame.mainLoop(wordToGuess, scramble, guesses, win);
-}
+	newGame.mainLoop(wordToGuess,gameWord, guesses, win, testVec, lifelines, lifeAllowed);
+	}
 
 if (guesses == 3){
 	std::cout<<"Oh Well, you lose :("<<std::endl;
-}
+	}
 
 else{
-	player1.victory();
-}
+	player1.victory("tbd");
+	}
 
 return 0;
 }
