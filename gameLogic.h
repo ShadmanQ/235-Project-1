@@ -1,9 +1,14 @@
+#ifndef GAMELOGIC_H
+#define GAMELOGIC_H
+
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include "player.h"
 
 using namespace std;
 
@@ -15,6 +20,7 @@ int wins = 0;
 int lifeline = 5;
 bool win = false;
 bool lifeAllowed = true;
+bool gameOver = false;
 int difficulty = 0;
 string currentWord ="";
 string jumbledWord = "";
@@ -29,48 +35,56 @@ public:
 		cout<<"If you would like to quit at any time, type 'quit'"<<endl;
 		cout<<"If you would like to use a lifeline at any time, type 'swap'"<<endl<<
 		"You can use it 5 times throughout the game."<<endl<<endl<<endl;
+
 	}
 
-	//main game logic, kills 
-	void mainLoop(vector<string> vec){
+	//parses vector for word, makes player guess the word
+	//@param vector loaded in from the main.cpp file 
+	void mainLoop(vector<string> vec, aPlayer play){
 		currentWord = chooseAWord(vec);
 		jumbledWord = currentWord;
 		jumbler(jumbledWord);
-	while(!win && playerGuesses < 3){
-		if (playerGuesses == 2){
-			lifeAllowed = false;
-		}
-		cout<<"This word is "<<difficulties[difficulty]<<endl;
-		cout<<"You have to solve "<<jumbledWord<<endl<<"You have " << (3-playerGuesses)<<" attempt(s) left"<<endl;
-		string guess;
-		cin >> guess;
-		if (guess == currentWord){
-			win = true;
-			victory(vec);
-		}
 
-		else if (guess == "swap"){
-			if (lifeAllowed){
-				lifeLine(currentWord, jumbledWord,lifeline, vec);
+		while(!win && playerGuesses < 3){
+			if (gameOver){
+				break;
+			}
+			
+			if (playerGuesses == 2){
+				lifeAllowed = false;
+			}
+			cout<<"This word is "<<difficulties[difficulty]<<endl;
+			cout<<"You have to solve "<<jumbledWord<<endl<<"You have " << (3-playerGuesses)<<" attempt(s) left"<<endl;
+			string guess;
+			cin >> guess;
+			if (guess == currentWord){
+				win = true;
+				victory(vec, play);
 			}
 
-		else{
-			cout<<"Can't let you do that!"<<endl;
-		}
-	}
-		else if (guess == "quit"){
-			cout<<"I'ma quit"<<endl;
-		}
+			else if (guess == "swap"){
+				if (lifeAllowed){
+					lifeLine(currentWord, jumbledWord,lifeline, vec);
+				}
 
-		else{
-			playerGuesses++;
+			else{
+				cout<<"Can't let you do that!"<<endl;
+				}
+			}
+
+			else if (guess == "quit"){
+				quit(play);
+			}
+
+			else{
+				playerGuesses++;
+			}
+
+		}	
+
+		if (playerGuesses == 3){
+			loss(currentWord);
 		}
-
-	}
-
-	if (playerGuesses == 3){
-		loss(currentWord);
-	}
 
 	}
 
@@ -80,17 +94,16 @@ public:
 		jumbler(oldscramble);
 		lifeline--;
 		cout << "You have "<<life<<" lifelines left"<<endl;
-
 	}
 	
 	string chooseAWord(vector<string> vec){
 		string thisThing = "";
 		while (!verifyDifficulty(thisThing)){
-		srand(time(0));
-		int mod = vec.size();
-		int index = rand() % mod;
+			srand(time(0));
+			int mod = vec.size();
+			int index = rand() % mod;
 
-		thisThing = vec[index];
+			thisThing = vec[index];
 		}
 		return thisThing;
 	}
@@ -99,7 +112,7 @@ public:
 		random_shuffle(normalWord.begin(),normalWord.end());
 	}
 	
-	void victory(vector<string> vec){
+	void victory(vector<string> vec, aPlayer p){
 		wins++;
 		cout<<"Awesome! You figured out that " <<jumbledWord<<" was actually "<<currentWord<<"!"<<endl;
 		cout<<"You now have "<<wins<<" win(s)"<<endl;
@@ -110,8 +123,10 @@ public:
 		if (cont == 'y'){
 			reset(vec);
 		}
+
 		else{
 			cout <<"Okay, hope you had fun!"<<endl;
+			quit(p);
 		}
 	}
 
@@ -119,6 +134,10 @@ public:
 		cout<<"Sorry! Your word was "<<word<<endl;
 	}
 
+	/**
+	@param string t, to compare to the upper bound and lower bound of a particular difficulty
+	@return true if length of the word is between upper/lower bound, i.e. appropriate difficulty
+	*/
 	bool verifyDifficulty(string t){
 		if (t.size() >= lowerbound && t.size() <= upperbound){
 			return true;
@@ -128,6 +147,9 @@ public:
 		}
 
 	}
+
+	/**
+	*/
 	void reset(vector<string> bec){
 		if ((wins % 3 == 0) && wins<13){
 			adjustDifficulty();
@@ -148,4 +170,12 @@ public:
 		}
 
 	}
+
+	void quit(aPlayer p){
+		cout<<"I hope you had fun!"<<endl;
+		cout<<"Your final total is "<< wins << " wins."<<endl;
+		p.outfile(wins);
+		gameOver = true;
+	}
 };
+#endif /* GAMELOGIC_H*/

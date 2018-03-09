@@ -1,18 +1,26 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
+
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
-class Player{
-int wins = 0;
-int guesses = 0;
+class aPlayer{
+private:
+
 public:
-void display(){
-cout<<"Player wins:"<<wins<<std::endl;
+void newSession(){
+	ifstream initialstats;
+	int firststat;
 }
 
-void victory(string word){
-wins++;
-cout<<"That's right! your word was " << word<<endl;
-cout<<"Player now has "<<wins<<" win(s)."<<endl;
-}
+void outFile(int outwins){
+	ofstream stats;
+	stats.open("playerstats.tsv");
+	stats <<outwins<<endl;
+	stats.close();
+	}
 };
+#endif /* PLAYER_H */

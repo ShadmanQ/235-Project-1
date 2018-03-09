@@ -16,7 +16,7 @@ CSCI 235 Project 1: World Jumble
 
 int main(){
 
-Player player1;
+aPlayer player1;
 Game newGame;
 bool win = false;
 bool lifeAllowed = true;
@@ -37,7 +37,7 @@ while(teststream>>a){
 
 newGame.welcomeMessage(); // message explain the rules of the game to the player
 
-newGame.mainLoop(testVec);
+newGame.mainLoop(testVec, player1);
 
 
 return 0;
