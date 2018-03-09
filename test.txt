@@ -1,10 +1,15 @@
+boy
 dog
 cat
 math
 food
+dumb
+girl
+foot
 slow
 pill
 hello
+smart
 world
 close
 cruise
