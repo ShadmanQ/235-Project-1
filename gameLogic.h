@@ -18,23 +18,28 @@ private:
 int playerGuesses = 0;
 int wins = 0;
 int lifeline = 5;
+int lowerbound = 3;
+int upperbound = 5;
+int difficulty = 0;
 bool win = false;
 bool lifeAllowed = true;
 bool gameOver = false;
-int difficulty = 0;
 string currentWord ="";
 string jumbledWord = "";
-string difficulties[4] = {"EASY","MEDIUM","HARD", "VERY HARD"};
-int lowerbound = 3;
-int upperbound = 5;
+string difficulties[6] = {"EASY","MEDIUM","HARD", "VERY HARD"};
+std::vector<string> correctWords;
 
 public:
 	//welcomes the player to the game, explains the rules
-	void welcomeMessage(){
+	void welcomeMessage(aPlayer p){
+
 		cout<<"Welcome to Word Jumble!"<<endl<<endl;
 		cout<<"If you would like to quit at any time, type 'quit'"<<endl;
 		cout<<"If you would like to use a lifeline at any time, type 'swap'"<<endl<<
 		"You can use it 5 times throughout the game."<<endl<<endl<<endl;
+		cout<<"The current record for wins is " << 7 <<endl;
+		wins = p.load();
+		adjustDifficulty();
 
 	}
 
@@ -49,7 +54,7 @@ public:
 			if (gameOver){
 				break;
 			}
-			
+
 			if (playerGuesses == 2){
 				lifeAllowed = false;
 			}
@@ -59,7 +64,7 @@ public:
 			cin >> guess;
 			if (guess == currentWord){
 				win = true;
-				victory(vec, play);
+				victory(vec, play, guess);
 			}
 
 			else if (guess == "swap"){
@@ -88,6 +93,8 @@ public:
 
 	}
 
+	/**
+	*/
 	void lifeLine(string& oldWord, string& oldscramble,int& life, vector<string> vec){
 		oldWord = chooseAWord(vec);
 		oldscramble = oldWord;
@@ -96,24 +103,32 @@ public:
 		cout << "You have "<<life<<" lifelines left"<<endl;
 	}
 	
+	/**
+	*/
 	string chooseAWord(vector<string> vec){
 		string thisThing = "";
+
 		while (!verifyDifficulty(thisThing)){
 			srand(time(0));
 			int mod = vec.size();
 			int index = rand() % mod;
 
 			thisThing = vec[index];
+
 		}
 		return thisThing;
 	}
-
+	
+	/**
+	*/
 	void jumbler(string& normalWord){
 		random_shuffle(normalWord.begin(),normalWord.end());
 	}
-	
-	void victory(vector<string> vec, aPlayer p){
+	/**
+	*/
+	void victory(vector<string> vec, aPlayer p, string vicString){
 		wins++;
+		correctWords.push_back(vicString);
 		cout<<"Awesome! You figured out that " <<jumbledWord<<" was actually "<<currentWord<<"!"<<endl;
 		cout<<"You now have "<<wins<<" win(s)"<<endl;
 		cout<<"Would you like to continue? (type y or n)"<<endl;
@@ -125,11 +140,12 @@ public:
 		}
 
 		else{
-			cout <<"Okay, hope you had fun!"<<endl;
 			quit(p);
 		}
 	}
 
+	/**
+	*/
 	void loss(string word){
 		cout<<"Sorry! Your word was "<<word<<endl;
 	}
@@ -151,9 +167,7 @@ public:
 	/**
 	*/
 	void reset(vector<string> bec){
-		if ((wins % 3 == 0) && wins<13){
-			adjustDifficulty();
-		}
+		adjustDifficulty();
 		playerGuesses = 0;
 		win = false;
 		lifeAllowed = true;
@@ -161,20 +175,28 @@ public:
 		jumbledWord = currentWord;
 		jumbler(jumbledWord);
 	}
+
+/**
+	*/
 	void adjustDifficulty(){
-		difficulty++;
-		lowerbound+=3;
-		upperbound+=3;
-		if (difficulty == 3){
+		int check = wins/3;
+		
+		if (check > difficulty){
+		lowerbound= 3 + (3*check);
+		upperbound= 5 + (3*check);
+		difficulty=check;
+		}
+		
+		if (difficulty == 5){
 			upperbound = 182;
 		}
-
 	}
-
+/**
+	*/
 	void quit(aPlayer p){
-		cout<<"I hope you had fun!"<<endl;
 		cout<<"Your final total is "<< wins << " wins."<<endl;
-		p.outfile(wins);
+		cout<<"Hope you enjoyed playing!"<<endl;
+		p.outFile(wins, correctWords);
 		gameOver = true;
 	}
 };

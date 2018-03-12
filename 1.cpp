@@ -35,7 +35,7 @@ while(teststream>>a){
 	testVec.push_back(a);
 }
 
-newGame.welcomeMessage(); // message explain the rules of the game to the player
+newGame.welcomeMessage(player1); // message explain the rules of the game to the player
 
 newGame.mainLoop(testVec, player1);
 
