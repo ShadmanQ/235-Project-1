@@ -1,7 +1,3 @@
-#ifndef PLAYER_H
-#define PLAYER_H
-
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -36,13 +32,13 @@ int load(){
 }
 
 
-void allTimeStats(int allWins, vector<string> cor;){
+void allTimeStats(int allWins, vector<string> cor){
 
 	ofstream allTime;
 	allTime.open("allTime.txt");
 	allTime << allWins;
-	for(int i = 0; i cor.size(); i++){
-		allTime<<cor[i]<<endl;
+	for(int i = 0; i < cor.size(); i++){
+		allTime<<cor[i]<<'\n';
 	}
 }
 void outFile(int outwins, vector<string> cor){
@@ -50,7 +46,7 @@ void outFile(int outwins, vector<string> cor){
 	stats.open("saveFile.tsv");
 	stats <<outwins<<endl;
 	for (int i = 0; i < cor.size(); i++){
-		stats << cor[i]<<endl;
+		stats << cor[i]<<'\n';
 	}
 	stats.close();
 	}

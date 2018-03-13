@@ -17,6 +17,7 @@ class Game{
 private:
 int playerGuesses = 0;
 int wins = 0;
+int recordWins = 0;
 int lifeline = 5;
 int lowerbound = 3;
 int upperbound = 5;
@@ -26,7 +27,7 @@ bool lifeAllowed = true;
 bool gameOver = false;
 string currentWord ="";
 string jumbledWord = "";
-string difficulties[6] = {"EASY","MEDIUM","HARD", "VERY HARD"};
+string guess;
 std::vector<string> correctWords;
 
 public:
@@ -37,7 +38,7 @@ public:
 		cout<<"If you would like to quit at any time, type 'quit'"<<endl;
 		cout<<"If you would like to use a lifeline at any time, type 'swap'"<<endl<<
 		"You can use it 5 times throughout the game."<<endl<<endl<<endl;
-		cout<<"The current record for wins is " << 7 <<endl;
+		cout<<"The current record for wins is " << wins <<endl;
 		wins = p.load();
 		adjustDifficulty();
 
@@ -58,9 +59,8 @@ public:
 			if (playerGuesses == 2){
 				lifeAllowed = false;
 			}
-			cout<<"This word is "<<difficulties[difficulty]<<endl;
+			cout<<"You are currenlty on level "<<difficulty<<endl;
 			cout<<"You have to solve "<<jumbledWord<<endl<<"You have " << (3-playerGuesses)<<" attempt(s) left"<<endl;
-			string guess;
 			cin >> guess;
 			if (guess == currentWord){
 				win = true;
@@ -108,7 +108,7 @@ public:
 	string chooseAWord(vector<string> vec){
 		string thisThing = "";
 
-		while (!verifyDifficulty(thisThing)){
+		while (!verifyDifficulty(thisThing) && !redunant()){
 			srand(time(0));
 			int mod = vec.size();
 			int index = rand() % mod;
@@ -139,8 +139,12 @@ public:
 			reset(vec);
 		}
 
-		else{
+		else if (cont == 'n'){
 			quit(p);
+		}
+
+		else {
+			cout << "not a valid input, try again"<<endl;
 		}
 	}
 
@@ -164,6 +168,18 @@ public:
 
 	}
 
+	bool redunant (){
+		for (int i = 0; i<correctWords.size(); i++){
+			if (guess == correctWords[i])
+			{
+				return true;
+				/* code */
+			}
+		return false;
+		}
+
+	}
+
 	/**
 	*/
 	void reset(vector<string> bec){
@@ -180,6 +196,7 @@ public:
 	*/
 	void adjustDifficulty(){
 		int check = wins/3;
+		cout << "CHECK =" <<check;
 		
 		if (check > difficulty){
 		lowerbound= 3 + (3*check);
