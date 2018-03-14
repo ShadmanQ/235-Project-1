@@ -1,7 +1,5 @@
 /**
-Shadman Quazi
 CSCI 235 Project 1: World Jumble
-
 */
 
 #include <iostream>
@@ -18,26 +16,21 @@ int main(){
 
 aPlayer player1;
 Game newGame;
-bool win = false;
-bool lifeAllowed = true;
-int guesses = 0;
-int lifelines = 5;
-int difficulty = 0;
 
 std::string a;
 std::ifstream teststream;
 
-std::vector<std::string> testVec;
+std::vector<std::string> inputVec;
 
-teststream.open("test.txt");
+teststream.open("wordList.txt");
 
 while(teststream>>a){
-	testVec.push_back(a);
+	inputVec.push_back(a);
 }
 
 newGame.welcomeMessage(player1); // message explain the rules of the game to the player
 
-newGame.mainLoop(testVec, player1);
+newGame.mainLoop(inputVec, player1);
 
 
 return 0;
